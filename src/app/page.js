@@ -29,7 +29,7 @@ function Icon({ n, size = 22, fill = false }) {
 const fmt = (n) => n.toLocaleString("en-IN");
 
 /* ---------- 3D pieces (pure CSS, no WebGL, no JS) ---------- */
-function Box({ cls = "", style }) {
+function Box({ cls = "", style, children }) {
   return (
     <div className={`box ${cls}`} style={style}>
       <i className="f-t" />
@@ -37,25 +37,58 @@ function Box({ cls = "", style }) {
       <i className="f-r" />
       <i className="f-b" />
       <i className="f-l" />
+      {children}
     </div>
   );
 }
 
+const TOWERS = [
+  { k: "a", x: 18, y: 26 },
+  { k: "b", x: 202, y: 26 },
+  { k: "c", x: 110, y: 222 },
+];
+const TREES = [
+  [120, 12], [140, 14], [160, 12], [180, 14],
+  [10, 110], [12, 140], [10, 170], [12, 200], [10, 232], [12, 262], [14, 290],
+  [290, 110], [288, 140], [290, 170], [288, 200], [290, 232], [288, 262], [286, 290],
+  [40, 290], [70, 292], [230, 292], [260, 290],
+  [88, 148], [212, 150], [96, 196], [204, 196], [150, 205], [60, 120], [240, 120],
+];
+
 function Towers() {
   return (
-    <div className="tw-scene" role="img" aria-label="Indicative 3D massing of the three G+31 towers around central greens">
+    <div className="tw-scene" role="img" aria-label="Indicative 3D view of the three G+31 towers around central greens">
       <div className="tw-city">
         <div className="tw-plate">
+          <i className="tw-road" />
           <i className="tw-lawn" />
+          <i className="tw-walk tw-walk-1" />
+          <i className="tw-walk tw-walk-2" />
           <i className="tw-pool" />
-          <i className="tw-path" />
+          {TOWERS.map((t) => (
+            <i key={t.k} className="tw-sh" style={{ left: t.x, top: t.y }} />
+          ))}
         </div>
-        <Box cls="tw tw-a" />
-        <Box cls="tw tw-b" />
-        <Box cls="tw tw-c" />
-        <Box cls="tw-club" />
-        {[18, 34, 62, 78, 50].map((x, i) => (
-          <i key={i} className="tw-tree" style={{ "--x": `${x}%`, "--y": `${[70, 40, 74, 46, 86][i]}%` }} />
+        {TOWERS.map((t) => (
+          <Box key={`p${t.k}`} cls="tw-pod" style={{ left: t.x - 6, top: t.y - 6 }} />
+        ))}
+        {TOWERS.map((t) => (
+          <Box key={t.k} cls={`tw tw-${t.k}`} style={{ left: t.x, top: t.y }}>
+            <div className="tw-top">
+              <Box cls="tw-crown" />
+            </div>
+          </Box>
+        ))}
+        <Box cls="tw-club">
+          <div className="tw-top">
+            <i className="tw-roofgarden" />
+          </div>
+        </Box>
+        {TREES.map(([x, y], i) => (
+          <div key={i} className="tree" style={{ left: x, top: y, "--s": `${12 + ((i * 7) % 6)}px` }}>
+            <i className="tree-sh" />
+            <i className="tree-c" />
+          </div>
         ))}
       </div>
       <span className="tw-tag tw-tag-a">3 towers · G+31</span>
@@ -88,14 +121,14 @@ function Orbit() {
     <div className="orb-scene" role="img" aria-label="Drive times from Hero Homes to nearby landmarks">
       <div className="orb-disc">
         {[5, 12, 20, 35].map((m) => (
-          <i key={m} className="orb-ring" style={{ "--r": Math.sqrt(m / max).toFixed(3) }}>
-            <b>{m} min</b>
-          </i>
+          <i key={m} className="orb-ring" style={{ "--r": Math.sqrt(m / max).toFixed(3) }} />
         ))}
         {PLACES.map((p, i) => (
           <div key={p.t} className="orb-dot" style={{ "--a": `${p.a}deg`, "--d": Math.sqrt(p.m / max).toFixed(3), "--i": i }}>
             <span className="orb-pin">
-              <em>{p.m} min</em>
+              <em>
+                <b>{p.m} min</b> {p.s}
+              </em>
             </span>
           </div>
         ))}
@@ -145,7 +178,7 @@ export default function Page() {
             <a href="#amenities">Amenities</a>
             <a href="#location">Location</a>
           </nav>
-          <a className="btn btn-line hd-call" href={`tel:${SITE.phoneE164}`}>
+          <a className="btn btn-line hd-call" href={`tel:${SITE.phoneE164}`} aria-label={`Call ${SITE.phoneDisplay}`}>
             <Icon n="phone" size={16} fill />
             <span>{SITE.phoneDisplay}</span>
           </a>
@@ -156,7 +189,7 @@ export default function Page() {
         {/* ---------------- Hero ---------------- */}
         <section className="hero" aria-labelledby="h1">
           <div className="hero-bg" aria-hidden="true">
-            <Image src="/img/hero-banner.webp" alt="" fill preload sizes="100vw" quality={80} />
+            <Image src="/img/hero-banner.webp" alt="" fill preload fetchPriority="high" sizes="100vw" />
           </div>
           <div className="hero-glow" aria-hidden="true" />
           <div className="wrap hero-in">
@@ -321,41 +354,37 @@ export default function Page() {
           </div>
         </section>
 
-        {/* ---------------- Amenities + 3D gallery ring ---------------- */}
+        {/* ---------------- Amenities + 3D coverflow gallery ---------------- */}
         <section className="sec am" id="amenities" aria-labelledby="am-h">
-          <div className="wrap am-in">
-            <div className="am-left">
-              <div className="sec-head left rv">
-                <p className="kicker">Amenities</p>
-                <h2 id="am-h">A resort-style life, right at home</h2>
-              </div>
-              <ul className="am-grid">
-                {AMENITIES.map((a) => (
-                  <li key={a.t} className="am-card rv">
-                    <span className="am-ic">
-                      <Icon n={a.i} />
-                    </span>
-                    <span>
-                      <b>{a.t}</b>
-                      <small>{a.d}</small>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+          <div className="wrap">
+            <div className="sec-head rv">
+              <p className="kicker">Amenities</p>
+              <h2 id="am-h">A resort-style life, right at home</h2>
             </div>
-            <div className="ring-wrap rv" aria-label="Project gallery, artist's impressions">
-              <div className="ring">
+            <div className="cv rv" aria-label="Project gallery, artist's impressions">
+              <div className="cv-stage">
                 {GALLERY.map((g, i) => (
-                  <figure key={g.src} className="ring-face" style={{ "--i": i }}>
-                    <div className="ring-front">
-                      <Image src={g.src} alt={g.alt} width={420} height={280} sizes="(max-width: 700px) 200px, 280px" />
-                      <figcaption>{g.t}</figcaption>
-                    </div>
+                  <figure key={g.src} className="cv-card" style={{ "--d": `${(-((GALLERY.length - i) % GALLERY.length) / GALLERY.length) * 24}s` }}>
+                    <Image src={g.src} alt={g.alt} width={620} height={410} sizes="(max-width: 700px) 280px, 560px" />
+                    <figcaption>{g.t}</figcaption>
                   </figure>
                 ))}
               </div>
-              <p className="cap ring-cap">All images are artist's impressions.</p>
+              <p className="cap cv-cap">All images are artist&apos;s impressions.</p>
             </div>
+            <ul className="am-grid">
+              {AMENITIES.map((a) => (
+                <li key={a.t} className="am-card rv">
+                  <span className="am-ic">
+                    <Icon n={a.i} />
+                  </span>
+                  <span>
+                    <b>{a.t}</b>
+                    <small>{a.d}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

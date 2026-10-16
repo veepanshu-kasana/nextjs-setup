@@ -124,12 +124,12 @@ export const GALLERY = [
 
 /** Drive times as published on the project website (approximate). */
 export const PLACES = [
-  { t: "Noida–Greater Noida Expressway", m: 5, a: 20 },
-  { t: "Pari Chowk / Depot Metro", m: 8, a: 70 },
-  { t: "DPS, Ryan & Shriram schools", m: 10, a: 130 },
-  { t: "Kailash & Fortis hospitals", m: 12, a: 190 },
-  { t: "Yamuna Expressway & malls", m: 15, a: 250 },
-  { t: "Noida International Airport, Jewar", m: 35, a: 315 },
+  { t: "Noida–Greater Noida Expressway", m: 5, s: "Expressway", a: 0 },
+  { t: "Pari Chowk / Depot Metro", m: 8, s: "Metro", a: 180 },
+  { t: "DPS, Ryan & Shriram schools", m: 10, s: "Schools", a: 120 },
+  { t: "Kailash & Fortis hospitals", m: 12, s: "Hospitals", a: 240 },
+  { t: "Yamuna Expressway & malls", m: 15, s: "Yamuna Expy", a: 60 },
+  { t: "Noida International Airport, Jewar", m: 35, s: "Jewar Airport", a: 300 },
 ];
 
 export const FAQS = [
