@@ -22,7 +22,7 @@ export const metadata = {
     title,
     description,
     locale: "en_IN",
-    images: [{ url: "/img/hero-banner.webp", width: 1024, height: 571, alt: "Hero Homes Greater Noida towers at sunset (artist's impression)" }],
+    images: [{ url: "/img/hero-banner.webp", width: 2048, height: 1142, alt: "Hero Homes Greater Noida towers at sunset (artist's impression)" }],
   },
   twitter: { card: "summary_large_image", title, description, images: ["/img/hero-banner.webp"] },
   icons: { icon: "/img/fav-192.png", apple: "/img/fav-192.png" },
